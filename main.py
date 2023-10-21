@@ -1,3 +1,4 @@
+import json
 from arqueiro import Arqueiro
 from bruxo import Bruxo
 from guerreiro import Guerreiro
@@ -29,11 +30,27 @@ CONST_CLASSES = {
     'Mago': Mago,
     'Paladino': Paladino,
     'Arqueiro': Arqueiro,
-    'Sacerdode': Sacerdote
+    'Sacerdote': Sacerdote
 }
 
-personagens = []
-personagemLogado = None
+PERSONAGENS = []
+PERSONAGEM_LOGADO = None
+
+def atualizaMemoria():
+    with open("memoria.json", "w") as outfile:
+        jsonDictionary = []
+        for personagem in PERSONAGENS:
+            jsonDictionary.append(personagem.toJson())
+        json_personagens = json.dumps(jsonDictionary, indent=4)
+        outfile.write(json_personagens)
+
+def lerMemoria():
+    with open("memoria.json", "r") as openfile:
+        jsonPersonagens = json.load(openfile)
+        for jsonPersonagem in jsonPersonagens:
+            personagemToAppend = CONST_CLASSES.get(jsonPersonagem['classe'], None)(jsonPersonagem['usuario'], jsonPersonagem['senha'])
+            personagemToAppend.fromJson(jsonPersonagem)
+            PERSONAGENS.append(personagemToAppend)
 
 
 def cadastraPersonagem():
@@ -66,13 +83,80 @@ def cadastraPersonagem():
         print('Reino inválida')
         return None
 
-menuLogin = int(input('\nSeleiona a Opcao\n1 - Login\n2 - Cadastro\n:'))
+def loginPersonagem():
+    usuario = input('Usuario: ')
+    senha = input('Senha: ')
+    return next((personagem for personagem in PERSONAGENS if personagem.usuario == usuario and personagem.senha == senha), None)
+
+def realizarMissao():
+    print(f'{PERSONAGEM_LOGADO.usuario} completou a missao e obteve +50 dinheiros e 1 nivel')
+    PERSONAGEM_LOGADO.setNivel(PERSONAGEM_LOGADO.nivel + 1)
+    PERSONAGEM_LOGADO.setDinheiro(PERSONAGEM_LOGADO.dinheiro + 50)
+    atualizaMemoria()
+
+def batalha():
+    print('Seleciona o usuario para batalha')
+    for personagem in PERSONAGENS:
+        if(personagem.usuario != PERSONAGEM_LOGADO.usuario):
+            print(f'{personagem.usuario}: Nivel {personagem.nivel}')
+
+    personagemSeleciondo = input(':')
+    personagemEncontrado = next((personagem for personagem in PERSONAGENS if personagem.usuario == personagemSeleciondo), None)
+
+    vidaA = personagemEncontrado.vida
+    vidaB = PERSONAGEM_LOGADO.vida
+
+    while(True):
+        danoCausado = personagemEncontrado.atacar(PERSONAGEM_LOGADO)
+        vidaB -= danoCausado
+        print(f'{PERSONAGEM_LOGADO.usuario} sofreu {danoCausado}: Vida {vidaB}')
+        if(vidaB<=0):
+            break
+
+        danoCausado = PERSONAGEM_LOGADO.atacar(personagemEncontrado)
+        vidaA -= danoCausado
+        print(f'{personagemEncontrado.usuario} sofreu {danoCausado}: Vida {vidaA}')
+        if(vidaA<=0):
+            break
+    
+    if(vidaA > vidaB):
+        print(f'{personagemEncontrado.usuario} venceu')
+    else:
+        print(f'{PERSONAGEM_LOGADO.usuario} venceu')
+
+def menuPrincipal():
+    while(True):
+        menuLogin = int(input('\nSeleiona a Opcao\n1 - Missao\n2 - Batalhar\n3 - Loja\n4 - Sair:\n'))
+        if menuLogin == 1:
+            realizarMissao()
+            
+        elif menuLogin == 2:
+            batalha()
+        elif menuLogin == 3:
+            pass
+        elif menuLogin == 4:
+            break
+        else:
+            print('Opcao Invalida')
+
+lerMemoria()
+
+menuLogin = int(input('\nSeleiona a Opcao\n1 - Cadastro\n2 - Login\n:'))
 
 if menuLogin == 1:
     retorno = cadastraPersonagem()
     if retorno:
-        personagens.append(retorno)
+        PERSONAGENS.append(retorno)
+        PERSONAGEM_LOGADO = retorno
+        atualizaMemoria()
+        menuPrincipal()
     else:
         print('\nErro ao Cadastrar Personagem')
+elif menuLogin == 2:
+    PERSONAGEM_LOGADO = loginPersonagem()
+    if(PERSONAGEM_LOGADO):
+        menuPrincipal()
+    else:
+        print('Usuario nao encontrado')
 
 # menuPrincipal = int('\nSeleciona a Opcao\n1 - Status\n2 - Batalha\n3 - Level Up\n4 - Comprar Item\n5 - Sair')
