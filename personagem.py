@@ -1,5 +1,5 @@
 import uuid
-
+from item import Item
 class Personagem():
     def __init__(self, vida, ataque, defesa, usuario, senha):
         self.id = uuid.uuid4().hex
@@ -13,6 +13,18 @@ class Personagem():
         self.itens = []
         self.classe = self.__class__.__name__
 
+    def itemsToJson(self):
+        jsonItens = []
+        for item in self.itens:
+            jsonItens.append(item.toJson())
+        return jsonItens
+
+    def itemFromJson(self, jsonItens):
+        arrayDeItens = []
+        for jsonItem in jsonItens:
+            arrayDeItens.append(Item(jsonItem['nome'], jsonItem['vida'], jsonItem['ataque'], jsonItem['defesa'], jsonItem['preco']))
+        return arrayDeItens
+
     def toJson(self):
         return {
             "id": self.id,
@@ -23,7 +35,7 @@ class Personagem():
             "nivel": self.nivel,
             "usuario": self.usuario,
             "senha": self.senha,
-            "itens": self.itens,
+            "itens": self.itemsToJson(),
             "classe": self.classe
         }
     
@@ -34,7 +46,7 @@ class Personagem():
         self.defesa = jsonPersonagem['defesa']
         self.dinheiro = jsonPersonagem['dinheiro']
         self.nivel = jsonPersonagem['nivel']
-        self.itens = jsonPersonagem['itens']
+        self.itens = self.itemFromJson(jsonPersonagem['itens'])
 
     def getSenha(self):
         return self.senha

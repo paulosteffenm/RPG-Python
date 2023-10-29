@@ -7,7 +7,7 @@ from mago import Mago
 from paladino import Paladino
 from sacerdote import Sacerdote
 from xama import Xama
-
+from item import Item
 
 CONST_HIERARQUIA = {
     'Reinos': {
@@ -31,6 +31,11 @@ CONST_CLASSES = {
     'Paladino': Paladino,
     'Arqueiro': Arqueiro,
     'Sacerdote': Sacerdote
+}
+
+CONST_ITENS = {
+    'Luva': Item('Luva', 100, 100, 100, 100),
+    'Capacete': Item('Capacete', 200, 200, 200, 200)
 }
 
 PERSONAGENS = []
@@ -124,6 +129,22 @@ def batalha():
     else:
         print(f'{PERSONAGEM_LOGADO.usuario} venceu')
 
+def loja():
+    for itemKey, itemObj in CONST_ITENS.items():
+        print(f'Nome: {itemObj.nome}, Vida: {itemObj.vida}, Ataque: {itemObj.ataque}, Defesa: {itemObj.defesa}, Preco: {itemObj.preco}')
+        
+    nomeItem = input('Nome Item: ')
+    if nomeItem in CONST_ITENS:
+        itemEncontrado = CONST_ITENS[nomeItem]
+        if PERSONAGEM_LOGADO.dinheiro >= itemEncontrado.preco:
+            PERSONAGEM_LOGADO.itens.append(itemEncontrado)
+            PERSONAGEM_LOGADO.setDinheiro(PERSONAGEM_LOGADO.dinheiro - itemEncontrado.preco)
+            atualizaMemoria()
+        else:
+            print('No money for you')
+    else:
+        print('Item nao encontrado')
+
 def menuPrincipal():
     while(True):
         menuLogin = int(input('\nSeleiona a Opcao\n1 - Missao\n2 - Batalhar\n3 - Loja\n4 - Sair:\n'))
@@ -133,6 +154,7 @@ def menuPrincipal():
         elif menuLogin == 2:
             batalha()
         elif menuLogin == 3:
+            loja()
             pass
         elif menuLogin == 4:
             break
