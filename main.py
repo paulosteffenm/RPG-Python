@@ -62,10 +62,10 @@ def cadastraPersonagem():
 
     usuario = input('Nome do Usuario: ')
     senha = input('Senha: ')
-    reino = input(f'Reino({'/'.join(CONST_HIERARQUIA['Reinos'].keys())}): ')
-    if reino in CONST_HIERARQUIA['Reinos']:
+    reino = input(f'Reino({"/".join(CONST_HIERARQUIA["Reinos"].keys())}): ')
+    if reino in CONST_HIERARQUIA["Reinos"]:
         raca = input(
-            f'Raça ({'/'.join(CONST_HIERARQUIA['Reinos'][reino].keys())}): ')
+            f'Raça ({"/".join(CONST_HIERARQUIA["Reinos"][reino].keys())}): ')
 
         if raca in CONST_HIERARQUIA['Reinos'][reino]:
             classe = input(
