@@ -106,7 +106,11 @@ def batalha():
             print(f'{personagem.usuario}: Nivel {personagem.nivel}')
 
     personagemSeleciondo = input(':')
+    
     personagemEncontrado = next((personagem for personagem in PERSONAGENS if personagem.usuario == personagemSeleciondo), None)
+
+    if personagemEncontrado == None:
+        return
 
     vidaA = personagemEncontrado.vida
     vidaB = PERSONAGEM_LOGADO.vida
