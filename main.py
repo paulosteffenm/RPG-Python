@@ -34,8 +34,8 @@ CONST_CLASSES = {
 }
 
 CONST_ITENS = {
-    'Luva': Item('Luva', 100, 100, 100, 100),
-    'Capacete': Item('Capacete', 200, 200, 200, 200)
+    'Luva': Item('Luva', 100, 100, 100, 100, False),
+    'Capacete': Item('Capacete', 200, 200, 200, 200, False)
 }
 
 PERSONAGENS = []
@@ -94,8 +94,8 @@ def loginPersonagem():
     return next((personagem for personagem in PERSONAGENS if personagem.usuario == usuario and personagem.senha == senha), None)
 
 def realizarMissao():
-    print(f'{PERSONAGEM_LOGADO.usuario} completou a missao e obteve +50 dinheiros e 1 nivel')
-    PERSONAGEM_LOGADO.setNivel(PERSONAGEM_LOGADO.nivel + 1)
+    print(f'{PERSONAGEM_LOGADO.usuario} completou a missao e obteve +50 dinheiros e +50 de Xp')
+    PERSONAGEM_LOGADO.setXp(50)
     PERSONAGEM_LOGADO.setDinheiro(PERSONAGEM_LOGADO.dinheiro + 50)
     atualizaMemoria()
 
@@ -114,6 +114,8 @@ def batalha():
 
     vidaA = personagemEncontrado.vida
     vidaB = PERSONAGEM_LOGADO.vida
+    personagemEncontrado.equiparItens()
+    PERSONAGEM_LOGADO.equiparItens()
 
     while(True):
         danoCausado = personagemEncontrado.atacar(PERSONAGEM_LOGADO)
@@ -149,9 +151,32 @@ def loja():
     else:
         print('Item nao encontrado')
 
+def inventario():
+    print('\nItens Equipados:')
+    for itemObj in PERSONAGEM_LOGADO.itens:
+        if(itemObj.equipado):
+            print(f'Nome: {itemObj.nome}, Vida: {itemObj.vida}, Ataque: {itemObj.ataque}, Defesa: {itemObj.defesa}, Preco: {itemObj.preco}')
+
+    print('\nLista de Itens:')
+    for index, itemObj in enumerate(PERSONAGEM_LOGADO.itens):
+            print(f'{index} - Nome: {itemObj.nome}, Vida: {itemObj.vida}, Ataque: {itemObj.ataque}, Defesa: {itemObj.defesa}, Preco: {itemObj.preco}')
+        
+    numItem = input('Informe o número do item para adicionar ou remover do inventário: ')
+    if PERSONAGEM_LOGADO.itens[int(numItem)]:
+        itemEncontrado = PERSONAGEM_LOGADO.itens[int(numItem)]
+        itemEncontrado.equipado = not itemEncontrado.equipado
+        if(itemEncontrado.equipado):
+            print(f'{itemEncontrado.nome} equipado')
+        else:
+            print(f'{itemEncontrado.nome} desequipado')
+        atualizaMemoria()
+
+    else:
+        print('Item nao encontrado')
+
 def menuPrincipal():
     while(True):
-        menuLogin = int(input('\nSeleiona a Opcao\n1 - Missao\n2 - Batalhar\n3 - Loja\n4 - Sair:\n'))
+        menuLogin = int(input('\nSeleiona a Opcao\n1 - Missao\n2 - Batalhar\n3 - Loja\n4 - Inventario:\n5 - Sair:\n'))
         if menuLogin == 1:
             realizarMissao()
             
@@ -161,6 +186,9 @@ def menuPrincipal():
             loja()
             pass
         elif menuLogin == 4:
+            inventario()
+            pass
+        elif menuLogin == 5:
             break
         else:
             print('Opcao Invalida')

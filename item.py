@@ -1,10 +1,11 @@
 class Item():
-    def __init__(self, nome, vida, ataque, defesa, preco):
+    def __init__(self, nome, vida, ataque, defesa, preco, equipado):
         self.nome = nome
         self.vida = vida
         self.ataque = ataque
         self.defesa = defesa
         self.preco = preco
+        self.equipado = equipado
 
     def toJson(self):
         return {
@@ -12,7 +13,8 @@ class Item():
         "vida": self.vida,
         "ataque": self.ataque,
         "defesa": self.defesa,
-        "preco": self.preco
+        "preco": self.preco,
+        "equipado": self.equipado
         }
     
     def fromJson(self, jsonItem):
@@ -21,3 +23,4 @@ class Item():
         self.ataque= jsonItem['ataque']
         self.defesa= jsonItem['defesa']
         self.preco= jsonItem['preco']
+        self.equipado= jsonItem['equipado']
