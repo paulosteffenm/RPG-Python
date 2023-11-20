@@ -16,7 +16,7 @@ class Personagem():
         self.senha = senha
         self.itens = []
         self.classe = self.__class__.__name__
-        self.qtdeItensEquipados = self.contItensEquipados()
+        self.qtdeItensEquipados = 0
         self.ataqueMaximo = 0
         self.defesaMaxima = 0
 
@@ -111,20 +111,18 @@ class Personagem():
         return (50 * math.pow(2, nivel))
     
     def equiparItem(self, item):
+        self.qtdeItensEquipados = self.contItensEquipados()
         if(self.qtdeItensEquipados >= 6):
-            print('Voce ja tem 2 itens equipados')
+            print('Voce ja tem 6 itens equipados')
             return
         item.equipado = True
+        self.qtdeItensEquipados += 1
+        print(f'{item.nome} equipado')
     
     def desequiparItem(self, item):
         item.equipado = False
-
-    def contItensEquipados(self):
-        cont = 0
-        for item in self.itens:
-            if(item.equipado):
-                cont += 1
-        return cont
+        self.qtdeItensEquipados -= 1
+        print(f'{item.nome} desequipado')
     
     def equiparItens(self):
         self.ataqueMaximo = 0
@@ -134,3 +132,10 @@ class Personagem():
                 self.ataqueMaximo += item.ataque
                 self.defesaMaxima += item.defesa
                 print(self.ataqueMaximo)
+
+    def contItensEquipados(self):
+        cont = 0
+        for item in self.itens:
+            if(item.equipado):
+                cont += 1
+        return cont

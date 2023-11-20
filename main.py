@@ -162,13 +162,12 @@ def inventario():
             print(f'{index} - Nome: {itemObj.nome}, Vida: {itemObj.vida}, Ataque: {itemObj.ataque}, Defesa: {itemObj.defesa}, Preco: {itemObj.preco}')
         
     numItem = input('Informe o número do item para adicionar ou remover do inventário: ')
-    if PERSONAGEM_LOGADO.itens[int(numItem)]:
-        itemEncontrado = PERSONAGEM_LOGADO.itens[int(numItem)]
-        itemEncontrado.equipado = not itemEncontrado.equipado
-        if(itemEncontrado.equipado):
-            print(f'{itemEncontrado.nome} equipado')
+    itemSelecionado = PERSONAGEM_LOGADO.itens[int(numItem)]
+    if itemSelecionado:
+        if(itemSelecionado.equipado):
+            PERSONAGEM_LOGADO.desequiparItem(itemSelecionado)
         else:
-            print(f'{itemEncontrado.nome} desequipado')
+            PERSONAGEM_LOGADO.equiparItem(itemSelecionado)
         atualizaMemoria()
 
     else:
